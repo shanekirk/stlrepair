@@ -36,12 +36,4 @@ bool fileExists(const std::string& pathToFile)
     return ::PathFileExistsA(pathToFile.c_str()) != FALSE;
 }
 
-/**
- * @since 2024 Jan 22
- */
-char getPathSeparatorChar()
-{
-    return '\\';
-}
-
 }

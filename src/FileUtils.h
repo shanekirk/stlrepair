@@ -21,11 +21,6 @@ uint32_t getFileSize(const std::string& pathToFile);
 bool fileExists(const std::string& pathToFile);
 
 /**
- * Returns the character to use as the platform path separator.
- */
-char getPathSeparatorChar();
-
-/**
  * Splits a filepath into separate components.
  */
 void splitPath(const std::string& fullpath, std::string& dir, 

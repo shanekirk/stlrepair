@@ -12,7 +12,7 @@ void splitPath(const std::string& fullpath, std::string& dir,
     if (fullpath.empty())
         return;
 
-    auto separatorPos = fullpath.find_last_of(getPathSeparatorChar());
+    auto separatorPos = fullpath.find_last_of("\\/:");
     std::string filename;
     if (separatorPos != std::string::npos)
     {
