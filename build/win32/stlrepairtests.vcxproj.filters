@@ -27,5 +27,14 @@
     <ClCompile Include="..\..\src\FileUtils_Win32.cpp">
       <Filter>Source Files\FromMainProject</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\tests\BinarySTLFileReaderTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\BinarySTLFileReader.cpp">
+      <Filter>Source Files\FromMainProject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,6 +1,3 @@
-#ifndef STLREPAIRTESTS_FILEUTILSTESTS__H_
-#define STLREPAIRTESTS_FILEUTILSTESTS__H_
-
 #include "FileUtils.h"
 #include "CallGuard.h"
 
@@ -174,5 +171,3 @@ TEST_F(FileUtilsTests, testSplitPathFileHavingMultipleDots)
     EXPECT_EQ(basename, "file.test");
     EXPECT_EQ(extension, "stl");
 }
-
-#endif
