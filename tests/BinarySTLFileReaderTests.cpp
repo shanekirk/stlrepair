@@ -17,9 +17,10 @@ public:
     }
 
     //! Called whenever parsing begins.
-    void onReadBegin() override
+    bool onReadBegin() override
     {
         ++m_readBeginCalledCount;
+        return true;
     }
 
     //! Called whenever parsing ends. Guaranteed to be called even in the event of errors.
@@ -29,19 +30,21 @@ public:
     }
 
     //! Called whenever the file header is parsed.
-    void onReadFileHeader(uint8_t* pBytes, size_t byteCount) override
+    bool onReadFileHeader(uint8_t* pBytes, size_t byteCount) override
     {
         m_headerBuffer.clear();
         m_headerBuffer.reserve(byteCount);
         m_headerBuffer.assign(pBytes, pBytes + byteCount);
         ++m_readFileHeaderCount;
+        return true;
     }
 
     //! Called whenever the total triangle count has been parsed.
-    void onReadTriangleCount(uint32_t triangleCount) override
+    bool onReadTriangleCount(uint32_t triangleCount) override
     {
         m_triangleCount = triangleCount;
         ++m_readTriangleCount;
+        return true;
     }
 
     int m_readBeginCalledCount;

@@ -43,17 +43,22 @@ void BinarySTLFileReader::readFile(BinarySTLFileReaderListener& listener)
 
     fseek(m_pFile, 0, SEEK_SET);
 
-    listener.onReadBegin();
+    bool cont = listener.onReadBegin();
     auto parseEndGuard = makeCallGuard([&]() { listener.onReadEnd(); });
+    if (!cont)
+        return;
 
-    readFileHeader(listener);
-    readTriangleCount(listener);
+    if (!readFileHeader(listener))
+        return;
+
+    if (!readTriangleCount(listener))
+        return;
 }
 
 /**
  * @since 2024 Jan 24
  */
-void BinarySTLFileReader::readFileHeader(BinarySTLFileReaderListener& listener)
+bool BinarySTLFileReader::readFileHeader(BinarySTLFileReaderListener& listener)
 {
     unsigned char headerData[BINARY_STL_HEADER_SIZE_IN_BYTES];
     memset(&headerData[0], 0, sizeof(headerData));
@@ -62,13 +67,13 @@ void BinarySTLFileReader::readFileHeader(BinarySTLFileReaderListener& listener)
     if (bytesRead != sizeof(headerData))
         throw std::runtime_error("Could not read file header.");
 
-    listener.onReadFileHeader(headerData, sizeof(headerData));
+    return listener.onReadFileHeader(headerData, sizeof(headerData));
 }
 
 /**
  * @since 2024 Jan 24
  */
-void BinarySTLFileReader::readTriangleCount(BinarySTLFileReaderListener& listener)
+bool BinarySTLFileReader::readTriangleCount(BinarySTLFileReaderListener& listener)
 {
     uint32_t triangleCount = 0;
 
@@ -76,5 +81,5 @@ void BinarySTLFileReader::readTriangleCount(BinarySTLFileReaderListener& listene
     if (bytesRead != sizeof(triangleCount))
         throw std::runtime_error("Could not read triangle count.");
 
-    listener.onReadTriangleCount(triangleCount);
+    return listener.onReadTriangleCount(triangleCount);
 }

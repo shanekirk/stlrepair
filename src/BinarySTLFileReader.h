@@ -17,6 +17,9 @@ constexpr const int MINIMUM_BINARY_STL_SIZE_IN_BYTES =
  * Callback interface for anything wishing to consume parsed data from the
  * BinarySTLFileReader.
  * 
+ * Returning false from any of these functions will cause the parser to
+ * stop immediately.
+ * 
  * Implementers should NOT throw.
  */
 class BinarySTLFileReaderListener
@@ -27,16 +30,16 @@ public:
     virtual ~BinarySTLFileReaderListener() {}
 
     //! Called whenever parsing begins.
-    virtual void onReadBegin() {}
+    virtual bool onReadBegin() { return true; }
 
     //! Called whenever parsing ends. Guaranteed to be called even in the event of errors.
     virtual void onReadEnd() {}
 
     //! Called whenever the file header is parsed.
-    virtual void onReadFileHeader(uint8_t* /*pBytes*/, size_t /*byteCount*/) {}
+    virtual bool onReadFileHeader(uint8_t* /*pBytes*/, size_t /*byteCount*/) { return true; }
 
     //! Called whenever the total triangle count has been parsed.
-    virtual void onReadTriangleCount(uint32_t /*triangleCount*/) {}
+    virtual bool onReadTriangleCount(uint32_t /*triangleCount*/) { return true; }
 };
 
 /**
@@ -68,8 +71,8 @@ public:
 
 private:
 
-    void readFileHeader(BinarySTLFileReaderListener& listener);
-    void readTriangleCount(BinarySTLFileReaderListener& listener);
+    bool readFileHeader(BinarySTLFileReaderListener& listener);
+    bool readTriangleCount(BinarySTLFileReaderListener& listener);
 
     FILE *m_pFile;
 };
