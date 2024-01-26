@@ -4,6 +4,15 @@
 #include <string>
 #include <cstdio>
 
+constexpr const int BINARY_STL_HEADER_SIZE_IN_BYTES = 80;
+constexpr const int BINARY_STL_TRIANGLE_COUNT_IN_BYTES = 4;
+constexpr const int BINARY_STL_TRIANGLE_SIZE_IN_BYTES = 50;
+
+constexpr const int MINIMUM_BINARY_STL_SIZE_IN_BYTES =
+    BINARY_STL_HEADER_SIZE_IN_BYTES +
+    BINARY_STL_TRIANGLE_COUNT_IN_BYTES +
+    BINARY_STL_TRIANGLE_SIZE_IN_BYTES;
+
 /**
  * Callback interface for anything wishing to consume parsed data from the
  * BinarySTLFileReader.
@@ -24,7 +33,10 @@ public:
     virtual void onReadEnd() {}
 
     //! Called whenever the file header is parsed.
-    virtual void onReadFileHeader(uint8_t* pBytes, size_t byteCount) {}
+    virtual void onReadFileHeader(uint8_t* /*pBytes*/, size_t /*byteCount*/) {}
+
+    //! Called whenever the total triangle count has been parsed.
+    virtual void onReadTriangleCount(uint32_t /*triangleCount*/) {}
 };
 
 /**
@@ -57,6 +69,7 @@ public:
 private:
 
     void readFileHeader(BinarySTLFileReaderListener& listener);
+    void readTriangleCount(BinarySTLFileReaderListener& listener);
 
     FILE *m_pFile;
 };

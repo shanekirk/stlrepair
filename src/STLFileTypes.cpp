@@ -1,17 +1,9 @@
 #include "STLFileTypes.h"
 #include "FileUtils.h"
 #include "CallGuard.h"
+#include "BinarySTLFileReader.h"
 
 #include <stdexcept>
-
-constexpr const int BINARY_STL_HEADER_SIZE_IN_BYTES = 80;
-constexpr const int BINARY_STL_TRIANGLE_COUNT_IN_BYTES = 4;
-constexpr const int BINARY_STL_TRIANGLE_SIZE_IN_BYTES = 50;
-
-constexpr const int MINIMUM_BINARY_STL_SIZE_IN_BYTES =
-    BINARY_STL_HEADER_SIZE_IN_BYTES +
-    BINARY_STL_TRIANGLE_COUNT_IN_BYTES +
-    BINARY_STL_TRIANGLE_SIZE_IN_BYTES;
 
 /**
  * @since 2024 Jan 21

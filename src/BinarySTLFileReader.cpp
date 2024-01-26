@@ -17,7 +17,8 @@ BinarySTLFileReader::BinarySTLFileReader(const std::string& filepath) :
     if (!FileUtils::fileExists(filepath))
         throw std::runtime_error("Specified STL file does not exist - " + filepath);
 
-    // TODO: Validate file size to ensure it's even possible that it's a binary STL file.
+    if (FileUtils::getFileSize(filepath) < MINIMUM_BINARY_STL_SIZE_IN_BYTES)
+        throw std::runtime_error("Specified file too small to be a binary STL - " + filepath);
 
     m_pFile = fopen(filepath.c_str(), "rb");
     if (!m_pFile)
@@ -46,6 +47,7 @@ void BinarySTLFileReader::readFile(BinarySTLFileReaderListener& listener)
     auto parseEndGuard = makeCallGuard([&]() { listener.onReadEnd(); });
 
     readFileHeader(listener);
+    readTriangleCount(listener);
 }
 
 /**
@@ -53,7 +55,7 @@ void BinarySTLFileReader::readFile(BinarySTLFileReaderListener& listener)
  */
 void BinarySTLFileReader::readFileHeader(BinarySTLFileReaderListener& listener)
 {
-    unsigned char headerData[80];
+    unsigned char headerData[BINARY_STL_HEADER_SIZE_IN_BYTES];
     memset(&headerData[0], 0, sizeof(headerData));
 
     auto bytesRead = fread(&headerData, 1, sizeof(headerData), m_pFile);
@@ -61,4 +63,18 @@ void BinarySTLFileReader::readFileHeader(BinarySTLFileReaderListener& listener)
         throw std::runtime_error("Could not read file header.");
 
     listener.onReadFileHeader(headerData, sizeof(headerData));
+}
+
+/**
+ * @since 2024 Jan 24
+ */
+void BinarySTLFileReader::readTriangleCount(BinarySTLFileReaderListener& listener)
+{
+    uint32_t triangleCount = 0;
+
+    auto bytesRead = fread(&triangleCount, 1, sizeof(triangleCount), m_pFile);
+    if (bytesRead != sizeof(triangleCount))
+        throw std::runtime_error("Could not read triangle count.");
+
+    listener.onReadTriangleCount(triangleCount);
 }
