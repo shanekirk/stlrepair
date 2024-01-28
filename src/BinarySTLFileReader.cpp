@@ -53,6 +53,8 @@ void BinarySTLFileReader::readFile(BinarySTLFileReaderListener& listener)
 
     if (!readTriangleCount(listener))
         return;
+
+    while (readTriangle(listener));
 }
 
 /**
@@ -82,4 +84,22 @@ bool BinarySTLFileReader::readTriangleCount(BinarySTLFileReaderListener& listene
         throw std::runtime_error("Could not read triangle count.");
 
     return listener.onReadTriangleCount(triangleCount);
+}
+
+/**
+ * @since 2024 Jan 28
+ */
+bool BinarySTLFileReader::readTriangle(BinarySTLFileReaderListener& listener)
+{
+    uint8_t data[50];
+
+    auto bytesRead = fread(&data[0], 1, sizeof(data), m_pFile);
+    if (bytesRead <= 0)
+        return false; // End of file.
+
+    if (bytesRead != sizeof(data))
+        return listener.onReadUnknownData(&data[0], bytesRead);
+
+    uint16_t* pAttributeCount = reinterpret_cast<uint16_t*>(&data[48]);
+    return listener.onReadTriangle(&data[0], sizeof(data) - 2, *pAttributeCount);
 }

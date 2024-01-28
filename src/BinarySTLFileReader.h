@@ -8,6 +8,7 @@ constexpr const int BINARY_STL_HEADER_SIZE_IN_BYTES = 80;
 constexpr const int BINARY_STL_TRIANGLE_COUNT_IN_BYTES = 4;
 constexpr const int BINARY_STL_TRIANGLE_SIZE_IN_BYTES = 50;
 
+// This assumes a valid STL has at least ONE triangle.
 constexpr const int MINIMUM_BINARY_STL_SIZE_IN_BYTES =
     BINARY_STL_HEADER_SIZE_IN_BYTES +
     BINARY_STL_TRIANGLE_COUNT_IN_BYTES +
@@ -16,10 +17,10 @@ constexpr const int MINIMUM_BINARY_STL_SIZE_IN_BYTES =
 /**
  * Callback interface for anything wishing to consume parsed data from the
  * BinarySTLFileReader.
- * 
+ *
  * Returning false from any of these functions will cause the parser to
  * stop immediately.
- * 
+ *
  * Implementers should NOT throw.
  */
 class BinarySTLFileReaderListener
@@ -36,10 +37,29 @@ public:
     virtual void onReadEnd() {}
 
     //! Called whenever the file header is parsed.
-    virtual bool onReadFileHeader(uint8_t* /*pBytes*/, size_t /*byteCount*/) { return true; }
+    virtual bool onReadFileHeader(const uint8_t * const /*pBytes*/, const size_t /*byteCount*/) { return true; }
 
     //! Called whenever the total triangle count has been parsed.
-    virtual bool onReadTriangleCount(uint32_t /*triangleCount*/) { return true; }
+    virtual bool onReadTriangleCount(const uint32_t /*triangleCount*/) { return true; }
+
+    /**
+     * Called whenever a triangle has been read.
+     * Note that we don't currently need to tease apart the triangle data for
+     * this app. We only need to treat it as a binary blob. This may change
+     * in the future.
+     */
+    virtual bool onReadTriangle(const uint8_t * const pTriangleData,
+        const size_t triangleDataSize, const uint16_t attributeByteCount) { return true; }
+
+    /**
+     * Called whenever a blob of unknown data is encountered. This usually
+     * happens near the end of a file which has truncated triangle data or
+     * an exporter has tacked something else on to the end.
+     *
+     * Regardless of why, it basically indicates the data isn't the same size as
+     * triangle data.
+     */
+    virtual bool onReadUnknownData(const uint8_t* const pData, const size_t dataSize) { return true; }
 };
 
 /**
@@ -51,10 +71,10 @@ public:
 
     /**
      * Constructor.
-     * 
+     *
      * @throws std::runtime_error
      */
-    BinarySTLFileReader(const std::string& filepath);
+    BinarySTLFileReader(const std::string &filepath);
 
     /**
      * Destructor.
@@ -64,15 +84,16 @@ public:
     /**
      * Attempts to parse the file. Parsed data will be provided to the
      * given listener.
-     * 
+     *
      * @throws std::runtime_error
      */
-    void readFile(BinarySTLFileReaderListener& listener);
+    void readFile(BinarySTLFileReaderListener &listener);
 
 private:
 
-    bool readFileHeader(BinarySTLFileReaderListener& listener);
-    bool readTriangleCount(BinarySTLFileReaderListener& listener);
+    bool readFileHeader(BinarySTLFileReaderListener &listener);
+    bool readTriangleCount(BinarySTLFileReaderListener &listener);
+    bool readTriangle(BinarySTLFileReaderListener& listener);
 
     FILE *m_pFile;
 };
