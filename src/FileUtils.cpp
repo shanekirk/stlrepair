@@ -1,4 +1,5 @@
 #include "FileUtils.h"
+#include "Contracts.h"
 
 namespace FileUtils
 {
@@ -9,8 +10,7 @@ namespace FileUtils
 void splitPath(const std::string& fullpath, std::string& dir,
     std::string& basename, std::string& extension)
 {
-    if (fullpath.empty())
-        return;
+    precondition_ret(!fullpath.empty(), );
 
     auto separatorPos = fullpath.find_last_of("\\/:");
     std::string filename;
@@ -36,6 +36,31 @@ void splitPath(const std::string& fullpath, std::string& dir,
         basename = filename;
         extension = "";
     }
+}
+
+/**
+ * @since 2024 Jan 30
+ */
+std::string generateUniqueFilePath(const std::string& filepathTemplate)
+{
+    precondition_ret(!filepathTemplate.empty(), "");
+
+    if (!fileExists(filepathTemplate))
+        return filepathTemplate; // Job well done!
+    
+    std::string dir, base, ext;
+    splitPath(filepathTemplate, dir, base, ext);
+
+    int count = 1;
+    std::string newFilePath;
+    do
+    {
+        newFilePath = dir + base + "(" + std::to_string(count) + ")." + ext;
+        ++count;
+
+    } while (fileExists(newFilePath));
+
+    return newFilePath;
 }
 
 }

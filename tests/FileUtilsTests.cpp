@@ -5,6 +5,8 @@
 
 #include <fstream>
 
+extern std::string TEST_DATA_DIR; // Yeah, I don't feel great about it. But it is what it is for now.
+
 class FileUtilsTests : public testing::Test
 {
 
@@ -170,4 +172,40 @@ TEST_F(FileUtilsTests, testSplitPathFileHavingMultipleDots)
     EXPECT_EQ(dir, "c:");
     EXPECT_EQ(basename, "file.test");
     EXPECT_EQ(extension, "stl");
+}
+
+TEST_F(FileUtilsTests, testGenerateUniqueFilePathWithEmptyString)
+{
+    std::string newPath = FileUtils::generateUniqueFilePath("");
+    EXPECT_TRUE(newPath.empty());
+}
+
+TEST_F(FileUtilsTests, testGenerateUniqueFilePathWithFileThatShouldntAlreadyExist)
+{
+    std::string newPath = FileUtils::generateUniqueFilePath("z:\\this\\file\\shouldnt\\exist.txt");
+    EXPECT_EQ(newPath, "z:\\this\\file\\shouldnt\\exist.txt");
+}
+
+TEST_F(FileUtilsTests, testGenerateUniqueFilePathWithFileThatAlreadyExists)
+{
+    std::string newPath = FileUtils::generateUniqueFilePath(TEST_DATA_DIR + "binary_5mm_sphere.stl");
+    EXPECT_EQ(newPath, TEST_DATA_DIR + "binary_5mm_sphere(1).stl");
+}
+
+TEST_F(FileUtilsTests, testGenerateUniqueFilePathWithTwoFilesThatAlreadyExists)
+{
+    const std::string TEST_FILE_1(TEST_DATA_DIR + "dummyfile.stl");
+    const std::string TEST_FILE_2(TEST_DATA_DIR + "dummyfile(1).stl");
+    const std::string EXPECTED_TEST_FILE(TEST_DATA_DIR + "dummyfile(2).stl");
+
+    // Creating test files
+    {
+        std::ofstream o1(TEST_FILE_1);
+        std::ofstream o2(TEST_FILE_2);
+    }
+    auto dummyGuard = makeCallGuard([&]() { _unlink(TEST_FILE_1.c_str()); });
+    auto dummyGuard2 = makeCallGuard([&]() { _unlink(TEST_FILE_2.c_str()); });
+
+    std::string newPath = FileUtils::generateUniqueFilePath(TEST_FILE_1);
+    EXPECT_EQ(newPath, EXPECTED_TEST_FILE);
 }

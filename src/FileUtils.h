@@ -25,6 +25,24 @@ bool fileExists(const std::string& pathToFile);
  */
 void splitPath(const std::string& fullpath, std::string& dir, 
     std::string& basename, std::string& extension);
+
+/**
+ * Generates a new filename that doesn't exist, using a base filepath as a 
+ * template. It basically appends an increasing number to the end of the 
+ * filename.
+ * 
+ * Example: Given c:\path.txt
+ *
+ * It will attempt to generate a filename like...
+ * 
+ * c:\path(1).txt
+ * c:\path(2).txt
+ * ...
+ *
+ * ...until it finds a file that doesn't exist.
+ */
+std::string generateUniqueFilePath(const std::string& filepathTemplate);
+
 }
 
 #endif
