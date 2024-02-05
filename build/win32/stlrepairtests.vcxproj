@@ -19,10 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\BinaryFileSTLWriter.cpp" />
     <ClCompile Include="..\..\src\BinarySTLFileReader.cpp" />
     <ClCompile Include="..\..\src\FileUtils.cpp" />
     <ClCompile Include="..\..\src\FileUtils_Win32.cpp" />
     <ClCompile Include="..\..\tests\BinarySTLFileReaderTests.cpp" />
+    <ClCompile Include="..\..\tests\BinarySTLFileWriterTests.cpp" />
     <ClCompile Include="..\..\tests\FileUtilsTests.cpp" />
     <ClCompile Include="..\..\tests\Main.cpp" />
   </ItemGroup>

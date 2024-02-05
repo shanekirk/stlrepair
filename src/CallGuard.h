@@ -12,19 +12,28 @@ class CallGuard
 public:
 
     //! Constructor.
-    explicit CallGuard(T callable) : m_callable(callable)
+    explicit CallGuard(T callable) : m_callable(callable),
+        m_dismiss(false)
     {
     }
 
     //! Destructor
     ~CallGuard()
     {
-        m_callable();
+        if (!m_dismiss)
+            m_callable();
+    }
+
+    //! Dismisses the callable from being invoked.
+    void dismiss()
+    {
+        m_dismiss = true;
     }
 
 private:
 
     T m_callable;
+    bool m_dismiss;
 };
 
 /**

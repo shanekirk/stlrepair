@@ -62,14 +62,14 @@ void BinarySTLFileReader::readFile(BinarySTLFileReaderListener& listener)
  */
 bool BinarySTLFileReader::readFileHeader(BinarySTLFileReaderListener& listener)
 {
-    unsigned char headerData[BINARY_STL_HEADER_SIZE_IN_BYTES];
-    memset(&headerData[0], 0, sizeof(headerData));
+    std::array<uint8_t, BINARY_STL_HEADER_SIZE_IN_BYTES> headerData;
+    memset(headerData.data(), 0, headerData.size());
 
-    auto bytesRead = fread(&headerData, 1, sizeof(headerData), m_pFile);
-    if (bytesRead != sizeof(headerData))
+    auto bytesRead = fread(headerData.data(), 1, headerData.size(), m_pFile);
+    if (bytesRead != headerData.size())
         throw std::runtime_error("Could not read file header.");
 
-    return listener.onReadFileHeader(headerData, sizeof(headerData));
+    return listener.onReadFileHeader(headerData);
 }
 
 /**

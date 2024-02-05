@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\BinaryFileSTLWriter.cpp" />
     <ClCompile Include="..\..\src\FileUtils.cpp" />
     <ClCompile Include="..\..\src\FileUtils_Win32.cpp" />
     <ClCompile Include="..\..\src\Main.cpp" />
@@ -27,6 +28,7 @@
     <ClCompile Include="..\..\src\STLFileTypes.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\BinarySTLFileWriter.h" />
     <ClInclude Include="..\..\src\CallGuard.h" />
     <ClInclude Include="..\..\src\Contracts.h" />
     <ClInclude Include="..\..\src\FileUtils.h" />

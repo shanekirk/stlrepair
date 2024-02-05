@@ -1,18 +1,11 @@
 #ifndef STLREPAIR_BINARYSTLFILEREADER__H_
 #define STLREPAIR_BINARYSTLFILEREADER__H_
 
+#include "STLFileTypes.h"
+
 #include <string>
 #include <cstdio>
-
-constexpr const int BINARY_STL_HEADER_SIZE_IN_BYTES = 80;
-constexpr const int BINARY_STL_TRIANGLE_COUNT_IN_BYTES = 4;
-constexpr const int BINARY_STL_TRIANGLE_SIZE_IN_BYTES = 50;
-
-// This assumes a valid STL has at least ONE triangle.
-constexpr const int MINIMUM_BINARY_STL_SIZE_IN_BYTES =
-    BINARY_STL_HEADER_SIZE_IN_BYTES +
-    BINARY_STL_TRIANGLE_COUNT_IN_BYTES +
-    BINARY_STL_TRIANGLE_SIZE_IN_BYTES;
+#include <array>
 
 /**
  * Callback interface for anything wishing to consume parsed data from the
@@ -37,7 +30,7 @@ public:
     virtual void onReadEnd() {}
 
     //! Called whenever the file header is parsed.
-    virtual bool onReadFileHeader(const uint8_t * const /*pBytes*/, const size_t /*byteCount*/) { return true; }
+    virtual bool onReadFileHeader(const STLBinaryHeader & /*header*/) { return true; }
 
     //! Called whenever the total triangle count has been parsed.
     virtual bool onReadTriangleCount(const uint32_t /*triangleCount*/) { return true; }
