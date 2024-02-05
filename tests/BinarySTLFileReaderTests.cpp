@@ -50,8 +50,8 @@ public:
     }
 
     //! Called whenever a triangle has been parsed.
-    bool onReadTriangle(const uint8_t* const pTriangleData,
-        const size_t triangleDataSize, const uint16_t attributeByteCount) override
+    bool onReadTriangle(const STLBinaryTriangleData& triangleData, 
+        const uint16_t attributeByteCount) override
     {
         ++m_readTriangleCalledCount;
         return true;

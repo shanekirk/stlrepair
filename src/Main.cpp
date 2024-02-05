@@ -2,6 +2,8 @@
 #include "Version.h"
 #include "RepairOptionPrompts.h"
 #include "STLFileTypes.h"
+#include "BinarySTLFileReader.h"
+#include "BinarySTLFileFilter.h"
 
 #include <iostream>
 
@@ -71,9 +73,15 @@ int main(int argc, const char** argv)
             }
         }
 
-        RepairOpts repairOpts;
-        repairOpts.clearHeader = promptClearFileHeader();
-        repairOpts.zeroOutFacetAttributeCount = promptClearFacetAttributeCounts();
+        std::string newFile = FileUtils::generateUniqueFilePath(argv[1]);
+        BinarySTLFileFilter filter(newFile);
+        BinarySTLFileReader reader(argv[1]);
+        reader.readFile(filter);
+
+
+//        RepairOpts repairOpts;
+//        repairOpts.clearHeader = promptClearFileHeader();
+//        repairOpts.zeroOutFacetAttributeCount = promptClearFacetAttributeCounts();
 
 //        STLFileReader::parseFile(argv[1]);
     }

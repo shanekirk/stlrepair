@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\BinaryFileSTLWriter.cpp" />
     <ClCompile Include="..\..\src\BinarySTLFileReader.cpp" />
+    <ClCompile Include="..\..\src\BinarySTLFileWriter.cpp" />
     <ClCompile Include="..\..\src\FileUtils.cpp" />
     <ClCompile Include="..\..\src\FileUtils_Win32.cpp" />
     <ClCompile Include="..\..\tests\BinarySTLFileReaderTests.cpp" />

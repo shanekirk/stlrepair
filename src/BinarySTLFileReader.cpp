@@ -91,15 +91,20 @@ bool BinarySTLFileReader::readTriangleCount(BinarySTLFileReaderListener& listene
  */
 bool BinarySTLFileReader::readTriangle(BinarySTLFileReaderListener& listener)
 {
-    uint8_t data[50];
+    STLBinaryTriangleData triangle;
+    uint16_t attributeCount = 0;
 
-    auto bytesRead = fread(&data[0], 1, sizeof(data), m_pFile);
+    unsigned char buffer[BINARY_STL_TRIANGLE_SIZE_IN_BYTES + 
+        BINARY_STL_TRIANGLE_ATTRIBUTE_BYTE_COUNT_IN_BYTES];
+
+    auto bytesRead = fread(&buffer[0], 1, sizeof(buffer), m_pFile);
     if (bytesRead <= 0)
         return false; // End of file.
 
-    if (bytesRead != sizeof(data))
-        return listener.onReadUnknownData(&data[0], bytesRead);
+    if (bytesRead != sizeof(buffer))
+        return listener.onReadUnknownData(&buffer[0], bytesRead);
 
-    uint16_t* pAttributeCount = reinterpret_cast<uint16_t*>(&data[48]);
-    return listener.onReadTriangle(&data[0], sizeof(data) - 2, *pAttributeCount);
+    std::copy(&buffer[0], &buffer[0] + BINARY_STL_TRIANGLE_SIZE_IN_BYTES, triangle.data());
+    attributeCount = *(reinterpret_cast<uint16_t*>(&buffer[0] + BINARY_STL_TRIANGLE_SIZE_IN_BYTES));
+    return listener.onReadTriangle(triangle, attributeCount);
 }

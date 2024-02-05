@@ -36,11 +36,11 @@
     <ClCompile Include="..\..\tests\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\BinaryFileSTLWriter.cpp">
-      <Filter>Source Files\FromMainProject</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\tests\BinarySTLFileWriterTests.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\BinarySTLFileWriter.cpp">
+      <Filter>Source Files\FromMainProject</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

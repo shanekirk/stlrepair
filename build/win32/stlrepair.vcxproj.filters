@@ -33,7 +33,10 @@
     <ClCompile Include="..\..\src\FileUtils_Win32.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\BinaryFileSTLWriter.cpp">
+    <ClCompile Include="..\..\src\BinarySTLFileFilter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\BinarySTLFileWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -60,6 +63,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Contracts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\BinarySTLFileFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

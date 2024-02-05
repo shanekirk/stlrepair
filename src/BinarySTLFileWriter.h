@@ -27,7 +27,8 @@ public:
      * 
      * @throws std::runtime_error
      */
-    BinarySTLFileWriter(const std::string& filepath, const STLBinaryHeader &header, const uint32_t triangleCount);
+    BinarySTLFileWriter(const std::string& filepath, 
+        const STLBinaryHeader &header, const uint32_t triangleCount);
 
     /**
      * Destructor.

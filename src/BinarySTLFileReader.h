@@ -41,8 +41,8 @@ public:
      * this app. We only need to treat it as a binary blob. This may change
      * in the future.
      */
-    virtual bool onReadTriangle(const uint8_t * const pTriangleData,
-        const size_t triangleDataSize, const uint16_t attributeByteCount) { return true; }
+    virtual bool onReadTriangle(const STLBinaryTriangleData &triangleData,
+        const uint16_t attributeByteCount) { return true; }
 
     /**
      * Called whenever a blob of unknown data is encountered. This usually
