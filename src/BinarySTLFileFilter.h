@@ -21,8 +21,7 @@ class BinarySTLFileFilter : public BinarySTLFileReaderListener
 public:
 
     //! Constructor.
-    BinarySTLFileFilter(const std::string& outputFilePath) : 
-        m_outputFilePath(outputFilePath) {}
+    BinarySTLFileFilter(const std::string& outputFilePath);
 
     //! Called whenever parsing ends. Guaranteed to be called even in the event of errors.
     void onReadEnd() override;
@@ -52,11 +51,18 @@ public:
      */
     bool onReadUnknownData(const uint8_t* const pData, const size_t dataSize) override;
 
+    bool m_zeroOutHeader;
+    bool m_truncateFileToTriangleCount;
+    bool m_updateTriangleCount;
+    bool m_zeroAttributeByteCounts;
+
 private:
 
     std::string m_outputFilePath;
-    STLBinaryHeader m_lastReadHeader;
+    STLBinaryHeader m_header;
     std::unique_ptr<BinarySTLFileWriter> m_spWriter;
+    uint32_t m_readTriangleCount;
+    uint32_t m_actualTriangleCount;
 };
 
 #endif
