@@ -15,6 +15,8 @@ BinarySTLFileFilter::BinarySTLFileFilter(const std::string& outputFilePath) :
     m_readTriangleCount(0),
     m_actualTriangleCount(0)
 {
+    precondition_throw(!outputFilePath.empty(), std::runtime_error("Output filename cannot be empty."));
+
     // Zero out the header. If m_zeroOutHeader == true, we'll
     // just write this out as is.
     memset(m_header.data(), 0, m_header.size());
@@ -32,7 +34,10 @@ void BinarySTLFileFilter::onReadEnd()
 
     if ((m_updateTriangleCount) && (m_actualTriangleCount != m_readTriangleCount))
     {
-        FILE* pFile = fopen(m_outputFilePath.c_str(), "ab");
+        FILE* pFile = fopen(m_outputFilePath.c_str(), "rb+");
+        if (!pFile)
+            throw std::runtime_error("Could not update output file triangle count.");
+
         fseek(pFile, BINARY_STL_HEADER_SIZE_IN_BYTES, SEEK_SET);
         fwrite(&m_actualTriangleCount, 1, sizeof(m_actualTriangleCount), pFile);
         fclose(pFile);

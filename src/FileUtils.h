@@ -43,6 +43,17 @@ void splitPath(const std::string& fullpath, std::string& dir,
  */
 std::string generateUniqueFilePath(const std::string& filepathTemplate);
 
+/**
+ * Returns true if the specified byte range matches between filepath1 and filepath2.
+ */
+bool areFilesEqual(const std::string& filepath1, const std::string& filepath2,
+    std::uintmax_t startByte, std::uintmax_t endByte);
+
+/**
+ * Returns true if the specified files have identical content.
+ */
+bool areFilesEqual(const std::string& filepath1, const std::string& filepath2);
+
 }
 
 #endif

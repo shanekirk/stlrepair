@@ -42,5 +42,11 @@
     <ClCompile Include="..\..\src\BinarySTLFileWriter.cpp">
       <Filter>Source Files\FromMainProject</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\BinarySTLFileFilter.cpp">
+      <Filter>Source Files\FromMainProject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\tests\BinarySTLFileFilterTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
