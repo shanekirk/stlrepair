@@ -30,9 +30,6 @@
     <ClCompile Include="..\..\src\FileUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\FileUtils_Win32.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\BinarySTLFileFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

@@ -23,7 +23,6 @@
     <ClCompile Include="..\..\src\BinarySTLFileReader.cpp" />
     <ClCompile Include="..\..\src\BinarySTLFileWriter.cpp" />
     <ClCompile Include="..\..\src\FileUtils.cpp" />
-    <ClCompile Include="..\..\src\FileUtils_Win32.cpp" />
     <ClCompile Include="..\..\tests\BinarySTLFileFilterTests.cpp" />
     <ClCompile Include="..\..\tests\BinarySTLFileReaderTests.cpp" />
     <ClCompile Include="..\..\tests\BinarySTLFileWriterTests.cpp" />
@@ -126,6 +125,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(GOOGLETESTHOME)\include;D:\stlrepair\src</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

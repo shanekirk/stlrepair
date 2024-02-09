@@ -21,6 +21,7 @@ std::uintmax_t getFileSize(const std::string& pathToFile)
     std::filesystem::path path(pathToFile);
     return std::filesystem::file_size(path);
 }
+
 /**
  * @since 2024 Jan 21
  */
