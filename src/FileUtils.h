@@ -13,7 +13,7 @@ namespace FileUtils
 /**
  * Returns the size of the specified file.
  */
-uint32_t getFileSize(const std::string& pathToFile);
+std::uintmax_t getFileSize(const std::string& pathToFile);
 
 /**
  * Returns true if the specified file exists.

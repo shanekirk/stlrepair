@@ -8,6 +8,33 @@ namespace FileUtils
 {
 
 /**
+ * @since 2024 Jan 21
+ */
+std::uintmax_t getFileSize(const std::string& pathToFile)
+{
+    if (pathToFile.empty())
+        return 0;
+
+    if (!fileExists(pathToFile))
+        return 0;
+
+    std::filesystem::path path(pathToFile);
+    return std::filesystem::file_size(path);
+}
+/**
+ * @since 2024 Jan 21
+ */
+bool fileExists(const std::string& pathToFile)
+{
+    if (pathToFile.empty())
+        return false;
+
+    std::filesystem::path path(pathToFile);
+
+    return std::filesystem::exists(path);
+}
+
+/**
  * @since 2024 Jan 22
  */
 void splitPath(const std::string& fullpath, std::string& dir,
