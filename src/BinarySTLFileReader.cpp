@@ -9,7 +9,9 @@
  * @since 2024 Jan 21
  */
 BinarySTLFileReader::BinarySTLFileReader(const std::string& filepath) :
-    m_pFile(nullptr)
+    m_pFile(nullptr),
+    m_totalTriangleCount(0),
+    m_currTriangleIndex(0)
 {
     if (filepath.empty())
         throw std::runtime_error("STL path cannot be empty.");
@@ -39,7 +41,7 @@ BinarySTLFileReader::~BinarySTLFileReader()
  */
 void BinarySTLFileReader::readFile(BinarySTLFileReaderListener& listener)
 {
-    invariant_throw(m_pFile != nullptr, "File not opened!");
+    invariant_throw(m_pFile != nullptr, "File not opened for reading!");
 
     fseek(m_pFile, 0, SEEK_SET);
 
@@ -77,13 +79,11 @@ bool BinarySTLFileReader::readFileHeader(BinarySTLFileReaderListener& listener)
  */
 bool BinarySTLFileReader::readTriangleCount(BinarySTLFileReaderListener& listener)
 {
-    uint32_t triangleCount = 0;
-
-    auto bytesRead = fread(&triangleCount, 1, sizeof(triangleCount), m_pFile);
-    if (bytesRead != sizeof(triangleCount))
+    auto bytesRead = fread(&m_totalTriangleCount, 1, sizeof(m_totalTriangleCount), m_pFile);
+    if (bytesRead != sizeof(m_totalTriangleCount))
         throw std::runtime_error("Could not read triangle count.");
 
-    return listener.onReadTriangleCount(triangleCount);
+    return listener.onReadTriangleCount(m_totalTriangleCount);
 }
 
 /**
@@ -104,7 +104,55 @@ bool BinarySTLFileReader::readTriangle(BinarySTLFileReaderListener& listener)
     if (bytesRead != sizeof(buffer))
         return listener.onReadUnknownData(&buffer[0], bytesRead);
 
+    if (m_currTriangleIndex >= m_totalTriangleCount)
+        return listener.onReadUnknownData(&buffer[0], bytesRead);
+
     std::copy(&buffer[0], &buffer[0] + BINARY_STL_TRIANGLE_SIZE_IN_BYTES, triangle.data());
     attributeCount = *(reinterpret_cast<uint16_t*>(&buffer[0] + BINARY_STL_TRIANGLE_SIZE_IN_BYTES));
+    ++m_currTriangleIndex;
     return listener.onReadTriangle(triangle, attributeCount);
 }
+
+/**
+ * @since 2024 Feb 11
+ */
+uint32_t readTriangleCount(const std::string& pathToFile)
+{
+    // Helper class
+    class TriangleCountListener : public BinarySTLFileReaderListener
+    {
+    public:
+        TriangleCountListener() : m_triangleCount(0) {}
+        bool onReadTriangleCount(const uint32_t triangleCount) { m_triangleCount = triangleCount; return false; }
+        uint32_t m_triangleCount;
+    };
+
+    TriangleCountListener listener;
+    BinarySTLFileReader reader(pathToFile);
+    reader.readFile(listener);
+    return listener.m_triangleCount;
+}
+
+/**
+ * @since 2024 Feb 11
+ */
+uint32_t calculateTriangleCount(const std::string& pathToFile)
+{
+    auto fileSize = FileUtils::getFileSize(pathToFile);
+    fileSize -= BINARY_STL_HEADER_SIZE_IN_BYTES;
+    fileSize -= BINARY_STL_TRIANGLE_COUNT_IN_BYTES;
+
+    return static_cast<uint32_t>(fileSize / (BINARY_STL_TRIANGLE_SIZE_IN_BYTES + BINARY_STL_TRIANGLE_ATTRIBUTE_BYTE_COUNT_IN_BYTES));
+}
+
+/**
+ * @since 2024 Feb 11
+ */
+uint32_t hasExtraData(const std::string& pathToFile)
+{    
+    const uint32_t TRIANGLE_BLOB_SIZE = BINARY_STL_TRIANGLE_SIZE_IN_BYTES + BINARY_STL_TRIANGLE_ATTRIBUTE_BYTE_COUNT_IN_BYTES;
+    uint32_t triangleCount = readTriangleCount(pathToFile);
+    uint32_t expectedFileSize = BINARY_STL_HEADER_SIZE_IN_BYTES + BINARY_STL_TRIANGLE_COUNT_IN_BYTES + (triangleCount * TRIANGLE_BLOB_SIZE);
+    return FileUtils::getFileSize(pathToFile) > expectedFileSize;
+}
+

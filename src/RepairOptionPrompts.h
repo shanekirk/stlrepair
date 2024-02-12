@@ -17,4 +17,14 @@ bool promptClearFileHeader();
  */
 bool promptClearFacetAttributeCounts();
 
+/**
+ * Prompts the user to adjust the internal triangle count to match the actual number of triangles.
+ */
+bool promptTriangleCountTooBig();
+
+/**
+ * Prompts the user to clear out any extra data appended to end of the file.
+ */
+bool promptTruncateExtraData();
+
 #endif

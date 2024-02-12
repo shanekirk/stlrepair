@@ -6,6 +6,7 @@
 
 #include <string>
 #include <memory>
+#include <vector>
 
 /**
  * This class serves to filter/modify STL data produced from a 
@@ -52,9 +53,10 @@ public:
     bool onReadUnknownData(const uint8_t* const pData, const size_t dataSize) override;
 
     bool m_zeroOutHeader;
-    bool m_truncateFileToTriangleCount;
     bool m_updateTriangleCount;
     bool m_zeroAttributeByteCounts;
+    bool m_clearExtraFileData;
+    uint32_t m_triangleLimit;
 
 private:
 
@@ -62,7 +64,9 @@ private:
     STLBinaryHeader m_header;
     std::unique_ptr<BinarySTLFileWriter> m_spWriter;
     uint32_t m_readTriangleCount;
-    uint32_t m_actualTriangleCount;
+    uint32_t m_actualTriangleCount;    
+
+    std::vector<char> m_xtraData;
 };
 
 #endif

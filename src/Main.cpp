@@ -8,40 +8,6 @@
 #include <iostream>
 
 /**
- * Prints out command line options.
- */
-void printHelp()
-{
-    std::cout << "usage: stlrepair <file.stl>" << std::endl;
-}
-
-/**
- * Options for the repair. We prompt the user for each one. At some point
- * it might be useful to turn these into command line options.
- */
-struct RepairOpts
-{
-    bool clearHeader;
-    bool zeroOutFacetAttributeCount;
-
-    enum class FacetMismatchAction
-    {
-        TruncateFacets,
-        UpdateFileFacetCount,
-        DoNothing
-    };
-
-    FacetMismatchAction mismatchFacetAction;
-
-    // Ctor
-    RepairOpts() : clearHeader(false),
-        zeroOutFacetAttributeCount(false),
-        mismatchFacetAction(FacetMismatchAction::DoNothing)
-    {
-    }
-};
-
-/**
  * main()
  */
 int main(int argc, const char** argv)
@@ -52,42 +18,71 @@ int main(int argc, const char** argv)
 
     if (argc < 2)
     {
-        printHelp();
+        std::cout << "usage: stlrepair <file.stl>" << std::endl;
         return 1;
     }
 
-    if (!FileUtils::fileExists(argv[1]))
+    const std::string inputFile = argv[1];
+
+    if (!FileUtils::fileExists(inputFile))
     {
-        std::cerr << "Specified file (" << argv[1] << ") does not exist.\n";
+        std::cerr << "Specified file (" << inputFile << ") does not exist.\n";
         return 1;
     }
 
     try
     {
-        if (determineFileType(argv[1]) == STLFileType::ASCII)
+        if (determineFileType(inputFile) == STLFileType::ASCII)
         {
             if (!promptShouldTreatASCIIModeAsBinary())
             {
-                std::cout << "Exiting";
+                std::cout << "Exiting\n";
                 return 0;
             }
         }
 
-        std::string newFile = FileUtils::generateUniqueFilePath(argv[1]);
+        if (FileUtils::getFileSize(inputFile) < MINIMUM_BINARY_STL_SIZE_IN_BYTES)
+            throw std::runtime_error("Specified file too small to be a binary STL - " + inputFile);
+
+
+        std::string newFile = FileUtils::generateUniqueFilePath(inputFile);
         BinarySTLFileFilter filter(newFile);
-        BinarySTLFileReader reader(argv[1]);
+
+        if (promptClearFileHeader())
+            filter.m_zeroOutHeader = true;
+
+        if (promptClearFacetAttributeCounts())
+            filter.m_zeroAttributeByteCounts = true;
+
+        uint32_t triangleCountRead = readTriangleCount(inputFile);
+        uint32_t triangleCountCalc = calculateTriangleCount(inputFile);
+
+        if (triangleCountRead > triangleCountCalc)
+        {
+            if (promptTriangleCountTooBig())
+            {
+                filter.m_updateTriangleCount = true;
+                filter.m_triangleLimit = triangleCountCalc;
+                filter.m_clearExtraFileData = true;
+            }
+        }
+
+        if (hasExtraData(inputFile))
+        {
+            if (promptTruncateExtraData())
+                filter.m_clearExtraFileData = true;
+        }
+
+        std::cout << "Generating new STL - " << newFile << "\n";
+        BinarySTLFileReader reader(inputFile);
         reader.readFile(filter);
 
-
-//        RepairOpts repairOpts;
-//        repairOpts.clearHeader = promptClearFileHeader();
-//        repairOpts.zeroOutFacetAttributeCount = promptClearFacetAttributeCounts();
-
-//        STLFileReader::parseFile(argv[1]);
+        std::cout << "Done.\n";
     }
     catch (const std::runtime_error& e)
     {
-        std::cerr << e.what() << std::endl;
+        std::cerr << e.what() << "\n";
+        return 1;
     }
 
     return 0;

@@ -89,6 +89,25 @@ private:
     bool readTriangle(BinarySTLFileReaderListener& listener);
 
     FILE *m_pFile;
+    uint32_t m_totalTriangleCount;
+    uint32_t m_currTriangleIndex;
 };
+
+/**
+ * Utility function for quickly reading the number of triangles reported by the
+ * binary STL file.
+ */
+uint32_t readTriangleCount(const std::string& pathToFile);
+
+/**
+ * Utility function for calculating the number of expected triangles based entirely
+ * on the size of the file.
+ */
+uint32_t calculateTriangleCount(const std::string& pathToFile);
+
+/**
+ * Utility function for determining if the specified file has junk data.
+ */
+uint32_t hasExtraData(const std::string& pathToFile);
 
 #endif

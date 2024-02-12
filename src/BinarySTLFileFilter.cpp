@@ -2,18 +2,21 @@
 #include "Contracts.h"
 
 #include <stdexcept>
+#include <iterator>
 
 /**
  * @since 2024 Feb 04
  */
 BinarySTLFileFilter::BinarySTLFileFilter(const std::string& outputFilePath) :
-    m_outputFilePath(outputFilePath),
     m_zeroOutHeader(false),
-    m_truncateFileToTriangleCount(false),
     m_updateTriangleCount(false),
     m_zeroAttributeByteCounts(false),
+    m_clearExtraFileData(false),
+    m_outputFilePath(outputFilePath),
     m_readTriangleCount(0),
-    m_actualTriangleCount(0)
+    m_actualTriangleCount(0),
+    m_triangleLimit(0)
+
 {
     precondition_throw(!outputFilePath.empty(), std::runtime_error("Output filename cannot be empty."));
 
@@ -30,9 +33,12 @@ void BinarySTLFileFilter::onReadEnd()
     precondition_throw(m_spWriter != nullptr,
         std::runtime_error("No output file opened for writing."));
 
-    m_spWriter->finalize();
+    if (!m_xtraData.empty())
+        m_spWriter->finalize(m_xtraData.data(), m_xtraData.size());
+    else
+        m_spWriter->finalize();
 
-    if ((m_updateTriangleCount) && (m_actualTriangleCount != m_readTriangleCount))
+    if (m_updateTriangleCount)
     {
         FILE* pFile = fopen(m_outputFilePath.c_str(), "rb+");
         if (!pFile)
@@ -77,7 +83,7 @@ bool BinarySTLFileFilter::onReadTriangle(const STLBinaryTriangleData& triangleDa
     precondition_throw(m_spWriter != nullptr, 
         std::runtime_error("No output file opened for writing."));
 
-    if ((m_truncateFileToTriangleCount) && (m_actualTriangleCount >= m_readTriangleCount))
+    if ((m_triangleLimit > 0) && (m_actualTriangleCount >= m_triangleLimit))
         return true;
 
     if (m_zeroAttributeByteCounts) 
@@ -98,10 +104,10 @@ bool BinarySTLFileFilter::onReadUnknownData(const uint8_t* const pData, const si
     precondition_throw(m_spWriter != nullptr,
         std::runtime_error("No output file opened for writing."));
 
-    if ((m_truncateFileToTriangleCount) && (m_actualTriangleCount >= m_readTriangleCount))
+    if (m_clearExtraFileData)
         return true;
 
-    m_spWriter->finalize(reinterpret_cast<const char *>(pData), dataSize);
+    std::copy(pData, pData + dataSize, std::back_inserter(m_xtraData));    
 
     return true;
 }

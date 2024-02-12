@@ -47,7 +47,7 @@ BinarySTLFileWriter::~BinarySTLFileWriter()
  */
 void BinarySTLFileWriter::writeTriangleData(const STLBinaryTriangleData& triangle, uint16_t attributeByteCount)
 {
-    invariant_throw(m_pFile != nullptr, std::runtime_error("File not opened!"));
+    invariant_throw(m_pFile != nullptr, std::runtime_error("File not opened for writing! (1)"));
 
     auto bytesWritten = fwrite(&triangle, 1, triangle.size(), m_pFile);
     if (bytesWritten != triangle.size())
@@ -75,7 +75,7 @@ void BinarySTLFileWriter::finalize()
  */
 void BinarySTLFileWriter::finalize(const char* pBuffer, size_t bufferSize)
 {
-    invariant_throw(m_pFile != nullptr, std::runtime_error("File not opened!"));
+    invariant_throw(m_pFile != nullptr, std::runtime_error("File not opened for writing! (2)"));
 
     if ((pBuffer != nullptr) && (bufferSize > 0))
         fwrite(pBuffer, 1, bufferSize, m_pFile);

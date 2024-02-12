@@ -67,3 +67,31 @@ bool promptClearFacetAttributeCounts()
 
     return promptUser("Clear the attribute counts (y/N/?)? ", pszHelp);
 }
+
+/**
+ * @since 2024 Feb 09
+ */
+bool promptTriangleCountTooBig()
+{
+    const char* pszHelp =
+        "The given file appears to have fewer triangles than that reported by\n"
+        "the file. This could happen if the file was interrupted during a download.\n"
+        "It could also happen that triangle count portion of the file is corrupt.\n"
+        "In any case, there's a possibility of lost geometry that we simply can't\n";
+        "recover.";
+
+    return promptUser("Sync the internal triangle count (y/N/?)? ", pszHelp);
+}
+
+/**
+ * @since 2024 Feb 11
+ */
+bool promptTruncateExtraData()
+{
+    const char* pszHelp =
+        "The given file appears to have non-triangle data on the end. This could be\n"
+        "due to a misbehaving exporter. This is a non-standard practice. Some importers\n";
+        "don't know what to do with this data. It's usually safe to clear it.\n";
+
+    return promptUser("Clear extra data (y/N/?)? ", pszHelp);
+}

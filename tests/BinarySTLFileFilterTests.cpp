@@ -62,14 +62,14 @@ TEST_F(BinarySTLFileFilterTests, testClearHeader)
         false);
 }
 
-TEST_F(BinarySTLFileFilterTests, testTruncateFile)
+TEST_F(BinarySTLFileFilterTests, testClearExtraFileData)
 {
     const std::string INPUT_FILE = TEST_DATA_DIR + "binary_5mm_sphere_weird_data_on_end.stl";
     const std::string OUTPUT_FILE = FileUtils::generateUniqueFilePath(INPUT_FILE);
     auto fileGuard = makeCallGuard([&]() { _unlink(OUTPUT_FILE.c_str()); });
 
     BinarySTLFileFilter filter(OUTPUT_FILE);
-    filter.m_truncateFileToTriangleCount = true;
+    filter.m_clearExtraFileData = true;
 
     BinarySTLFileReader reader(INPUT_FILE);
     reader.readFile(filter);
@@ -80,19 +80,33 @@ TEST_F(BinarySTLFileFilterTests, testTruncateFile)
     EXPECT_EQ(FileUtils::areFilesEqual(INPUT_FILE, OUTPUT_FILE, 0, smallerFileSize), true);
 }
 
-TEST_F(BinarySTLFileFilterTests, testUpdateTriangleCount)
+TEST_F(BinarySTLFileFilterTests, testUpdateTriangleCountWithCountTooSmall)
 {
     const std::string INPUT_FILE = TEST_DATA_DIR + "binary_5mm_sphere_with_wrong_triangle_count.stl";
     const std::string OUTPUT_FILE = FileUtils::generateUniqueFilePath(INPUT_FILE);
     auto fileGuard = makeCallGuard([&]() { _unlink(OUTPUT_FILE.c_str()); });
-
+    
     BinarySTLFileFilter filter(OUTPUT_FILE);
-    filter.m_updateTriangleCount = true;
+    filter.m_updateTriangleCount = true; // Effectively does nothing here unless we enable clearing xtra data.
 
     BinarySTLFileReader reader(INPUT_FILE);
     reader.readFile(filter);
 
-    EXPECT_EQ(FileUtils::getFileSize(INPUT_FILE), FileUtils::getFileSize(OUTPUT_FILE));
+    // These two files should be identical after the repair.
+    EXPECT_EQ(FileUtils::areFilesEqual(INPUT_FILE, OUTPUT_FILE), true);
+}
+
+TEST_F(BinarySTLFileFilterTests, testUpdateTriangleCountWithCountTooBig)
+{
+    const std::string INPUT_FILE = TEST_DATA_DIR + "binary_5mm_sphere_with_giant_triangle_count.stl";
+    const std::string OUTPUT_FILE = FileUtils::generateUniqueFilePath(INPUT_FILE);
+    auto fileGuard = makeCallGuard([&]() { _unlink(OUTPUT_FILE.c_str()); });
+
+    BinarySTLFileFilter filter(OUTPUT_FILE);
+    filter.m_updateTriangleCount = true; // Effectively does nothing here unless we enable clearing xtra data.
+
+    BinarySTLFileReader reader(INPUT_FILE);
+    reader.readFile(filter);
 
     // These two files should be identical after the repair.
     EXPECT_EQ(FileUtils::areFilesEqual(TEST_DATA_DIR + "binary_5mm_sphere.stl", OUTPUT_FILE), true);
