@@ -1,7 +1,7 @@
 # STLRepair
 
 ### What is STLRepair?
-STLRepair is a simple comment line tool for repairing broken binary STL files for 3D printing.
+STLRepair is a simple open-source command line tool for repairing broken binary STL files for 3D printing.
 
 This tool attempts to fix common structural issues in files that some exporters can introduce that can bewilder importers. Common issues include:
 
