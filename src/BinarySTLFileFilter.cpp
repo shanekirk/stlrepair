@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 #include <iterator>
+#include <cstring>
 
 /**
  * @since 2024 Feb 04
@@ -12,11 +13,10 @@ BinarySTLFileFilter::BinarySTLFileFilter(const std::string& outputFilePath) :
     m_updateTriangleCount(false),
     m_zeroAttributeByteCounts(false),
     m_clearExtraFileData(false),
+	m_triangleLimit(0),
     m_outputFilePath(outputFilePath),
     m_readTriangleCount(0),
-    m_actualTriangleCount(0),
-    m_triangleLimit(0)
-
+    m_actualTriangleCount(0)
 {
     precondition_throw(!outputFilePath.empty(), std::runtime_error("Output filename cannot be empty."));
 
@@ -77,16 +77,16 @@ bool BinarySTLFileFilter::onReadTriangleCount(const uint32_t triangleCount)
 /**
  * @since 2024 Feb 04
  */
-bool BinarySTLFileFilter::onReadTriangle(const STLBinaryTriangleData& triangleData, 
+bool BinarySTLFileFilter::onReadTriangle(const STLBinaryTriangleData& triangleData,
     uint16_t attributeByteCount)
 {
-    precondition_throw(m_spWriter != nullptr, 
+    precondition_throw(m_spWriter != nullptr,
         std::runtime_error("No output file opened for writing."));
 
     if ((m_triangleLimit > 0) && (m_actualTriangleCount >= m_triangleLimit))
         return true;
 
-    if (m_zeroAttributeByteCounts) 
+    if (m_zeroAttributeByteCounts)
         m_spWriter->writeTriangleData(triangleData, 0);
     else
         m_spWriter->writeTriangleData(triangleData, attributeByteCount);
@@ -107,7 +107,7 @@ bool BinarySTLFileFilter::onReadUnknownData(const uint8_t* const pData, const si
     if (m_clearExtraFileData)
         return true;
 
-    std::copy(pData, pData + dataSize, std::back_inserter(m_xtraData));    
+    std::copy(pData, pData + dataSize, std::back_inserter(m_xtraData));
 
     return true;
 }

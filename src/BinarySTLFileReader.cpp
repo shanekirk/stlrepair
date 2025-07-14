@@ -4,6 +4,7 @@
 #include "CallGuard.h"
 
 #include <stdexcept>
+#include <cstring>
 
 /**
  * @since 2024 Jan 21
@@ -94,7 +95,7 @@ bool BinarySTLFileReader::readTriangle(BinarySTLFileReaderListener& listener)
     STLBinaryTriangleData triangle;
     uint16_t attributeCount = 0;
 
-    unsigned char buffer[BINARY_STL_TRIANGLE_SIZE_IN_BYTES + 
+    unsigned char buffer[BINARY_STL_TRIANGLE_SIZE_IN_BYTES +
         BINARY_STL_TRIANGLE_ATTRIBUTE_BYTE_COUNT_IN_BYTES];
 
     auto bytesRead = fread(&buffer[0], 1, sizeof(buffer), m_pFile);
@@ -149,7 +150,7 @@ uint32_t calculateTriangleCount(const std::string& pathToFile)
  * @since 2024 Feb 11
  */
 uint32_t hasExtraData(const std::string& pathToFile)
-{    
+{
     const uint32_t TRIANGLE_BLOB_SIZE = BINARY_STL_TRIANGLE_SIZE_IN_BYTES + BINARY_STL_TRIANGLE_ATTRIBUTE_BYTE_COUNT_IN_BYTES;
     uint32_t triangleCount = readTriangleCount(pathToFile);
     uint32_t expectedFileSize = BINARY_STL_HEADER_SIZE_IN_BYTES + BINARY_STL_TRIANGLE_COUNT_IN_BYTES + (triangleCount * TRIANGLE_BLOB_SIZE);

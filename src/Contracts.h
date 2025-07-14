@@ -6,7 +6,7 @@
  * directly in code as if-statements. However, I find it useful to visually
  * differentiate between pre-conditions/post-conditions/invariants vs. other
  * conditional logic.
- * 
+ *
  * One day, these might be replaced with language-supported contracts.
  */
 #define precondition_ret(X, Y) { if (!(X)) { return Y; }}

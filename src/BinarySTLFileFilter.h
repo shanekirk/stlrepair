@@ -7,13 +7,14 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <cstdint>
 
 /**
- * This class serves to filter/modify STL data produced from a 
+ * This class serves to filter/modify STL data produced from a
  * BinarySTLFileReader and write it back out to disk.
  *
  * At this moment, this works as a monolithic filter class. But
- * in the future, as needs get more sophisticated, I could 
+ * in the future, as needs get more sophisticated, I could
  * envision breaking it up into a more traditional pipe-filter
  * oriented design.
  */
@@ -39,7 +40,7 @@ public:
      * this app. We only need to treat it as a binary blob. This may change
      * in the future.
      */
-    bool onReadTriangle(const STLBinaryTriangleData& triangleData, 
+    bool onReadTriangle(const STLBinaryTriangleData& triangleData,
         const uint16_t attributeByteCount) override;
 
     /**
@@ -64,7 +65,7 @@ private:
     STLBinaryHeader m_header;
     std::unique_ptr<BinarySTLFileWriter> m_spWriter;
     uint32_t m_readTriangleCount;
-    uint32_t m_actualTriangleCount;    
+    uint32_t m_actualTriangleCount;
 
     std::vector<char> m_xtraData;
 };

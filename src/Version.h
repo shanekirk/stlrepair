@@ -9,8 +9,8 @@ constexpr const int VERSION_BUILD = 0;
 
 inline std::string getVersionString()
 {
-    return std::to_string(VERSION_MAJOR) + "." + 
-           std::to_string(VERSION_MINOR) + "." + 
+    return std::to_string(VERSION_MAJOR) + "." +
+           std::to_string(VERSION_MINOR) + "." +
            std::to_string(VERSION_BUILD);
 }
 

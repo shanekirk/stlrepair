@@ -3,6 +3,7 @@
 #include "CallGuard.h"
 
 #include <filesystem>
+#include <cstring>
 
 namespace FileUtils
 {
@@ -78,7 +79,7 @@ std::string generateUniqueFilePath(const std::string& filepathTemplate)
 
     if (!fileExists(filepathTemplate))
         return filepathTemplate; // Job well done!
-    
+
     std::string dir, base, ext;
     splitPath(filepathTemplate, dir, base, ext);
 

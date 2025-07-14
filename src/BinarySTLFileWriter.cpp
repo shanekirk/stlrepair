@@ -18,7 +18,7 @@ BinarySTLFileWriter::BinarySTLFileWriter(const std::string& filepath,
     if (!m_pFile)
         throw std::runtime_error("Unknown error when opening " + filepath);
 
-    // Destructors aren't called when exceptions are thrown from 
+    // Destructors aren't called when exceptions are thrown from
     // constructors, which is why we're setting up a guard here.
     // We'll dismiss it later if all is well.
     auto exceptionGuard = makeCallGuard([&]() { fclose(m_pFile); });
